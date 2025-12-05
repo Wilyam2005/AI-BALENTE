@@ -103,6 +103,7 @@
         .title-word:nth-child(2) { animation-delay: 1.0s; }
         .title-word:nth-child(3) { animation-delay: 1.2s; color: var(--gold-sasak); text-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
 
+        /* --- DESKRIPSI DI BAWAH JUDUL (DIPERJELAS) --- */
         .hero-desc-container {
             opacity: 0; animation: fadeUp 1s forwards 1.5s;
             border-left: 4px solid var(--gold-sasak); padding-left: 25px;
@@ -248,14 +249,13 @@
 
     <nav>
         <div class="logo-container" style="display:flex; align-items:center; gap:15px;">
-            <!-- PERBAIKAN: Menggunakan 2025.png -->
             <img src="2025.png" alt="Logo" class="logo-img">
             <span class="brand-name">RANGGA <span class="brand-highlight">AI</span></span>
         </div>
         <button class="nav-btn" onclick="scrollToTerminal()">AKSES TERMINAL</button>
     </nav>
 
-    <!-- PERBAIKAN: Menggunakan 3.png dan 2.png -->
+    <!-- Gambar Aset -->
     <img src="3.png" class="bg-fig fig-1" id="fig1" alt="Rangga Waving">
     <img src="2.png" class="bg-fig fig-2" id="fig2" alt="Rangga Speaking">
 
@@ -268,16 +268,18 @@
                     <span class="title-word">LOTIM</span> 
                     <span class="title-word">NEXT LEVEL</span>
                 </h1>
+                
+                <!-- BAGIAN TEKS DESKRIPSI (YANG DIMINTA) -->
                 <div class="hero-desc-container">
                     <p class="hero-desc">
                         Tabe! Selamat datang di era baru pariwisata. Saya Rangga, pemandu cerdas yang memadukan presisi data futuristik dengan kehangatan budaya Sasak. Rinjani, Sembalun, hingga Kuliner Pedas—mari kita mulai petualangannya.
                     </p>
                 </div>
+                
                 <button class="btn-glow" onclick="scrollToTerminal()">MULAI KONSULTASI</button>
             </div>
             <div class="hero-visual" id="heroVisual">
                 <div class="holo-ring"></div>
-                <!-- PERBAIKAN: Menggunakan 1.png (karakter utama) -->
                 <img src="1.png" class="main-char" id="mainChar" alt="Rangga AI Main">
             </div>
         </div>
@@ -287,15 +289,15 @@
         <div class="terminal-box" id="terminalBox">
             <div class="term-header">
                 <div style="font-family:'Orbitron'; font-size:0.9rem; color:#fff; letter-spacing: 1px; display:flex; align-items:center;">
-                    <span class="status-dot"></span> NEURAL NETWORK: ONLINE
+                    <span class="status-dot"></span> NEURAL NETWORK: <span style="color:#00FF00; margin-left:5px;">ONLINE</span>
                 </div>
                 <div style="color:var(--teal-tech); letter-spacing:2px; font-family:'Orbitron'; font-weight:bold; font-size:0.9rem;">SASAK_PROTOCOL_V.5.0</div>
             </div>
 
             <div class="chat-area" id="chat-area">
                 <div class="message bot-msg">
-                    <b>Tabe! (Permisi).</b> Saya Rangga AI.<br><br>
-                    Siap menjadi teman perjalanan Anda di Lombok Timur. Pilih topik cepat di bawah atau ketik pertanyaan Anda:
+                    <!-- SAPAAN AWAL YANG SINGKAT -->
+                    <b>Tabe!</b> Saya Rangga AI. Ada yang bisa dibantu?
                 </div>
             </div>
 
@@ -314,9 +316,6 @@
     </section>
 
     <script>
-        // --- KONFIGURASI API GEMINI ---
-        const apiKey = "AIzaSyBsaQt2hbRzY5ukBMsx_L0IUtwJ0545TPI"; 
-        
         const chatArea = document.getElementById('chat-area');
         const userInput = document.getElementById('user-input');
         const mainChar = document.getElementById('mainChar');
@@ -349,7 +348,9 @@
             document.getElementById('terminal-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- CHAT LOGIC ---
+        // --- CHAT LOGIC (POLLINATIONS AI - KEYLESS) ---
+        // Solusi aman, gratis, dan cerdas tanpa API Key pribadi
+        
         function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
         function sendQuick(text) { userInput.value = text; sendMessage(); }
 
@@ -365,58 +366,44 @@
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message bot-msg';
             loadingDiv.id = loadingId;
-            loadingDiv.innerHTML = '<span style="color:var(--teal-tech)">[AI SEDANG BERPIKIR...]</span>';
+            loadingDiv.innerHTML = '<span style="color:var(--teal-tech)">[SEDANG MEMPROSES...]</span>';
             chatArea.appendChild(loadingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // Prompt System 
             const systemPrompt = "Peran: Rangga, AI Duta Wisata Lombok Timur. Gaya: Futuristik, sopan, berbudaya Sasak (gunakan kata 'Tabe'). Jangan terlalu panjang. Format HTML bold <b> untuk poin penting. Jawablah pertanyaan seputar wisata, budaya, dan kuliner Lombok Timur.";
 
             try {
-                // Fetch request ke Google Gemini API Langsung
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                // Request ke Pollinations AI (Gratis, Unlimited)
+                const response = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: text }
+                        ],
+                        model: 'openai',
+                        seed: Math.floor(Math.random() * 1000)
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
+                if (!response.ok) throw new Error("Jaringan sibuk.");
 
-                const data = await response.json();
+                let reply = await response.text();
                 
-                // Parsing response Gemini
-                let reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (!reply) {
-                    throw new Error("Tidak ada respon dari AI");
-                }
-                
-                // Formatting Text (Markdown ke HTML sederhana)
+                // Format Teks
                 reply = reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Bold
-                             .replace(/\n\*/g, '<br>• ') // List bullet
-                             .replace(/\* /g, '<br>• ') // List bullet space
-                             .replace(/\n/g, '<br>'); // Enter
+                             .replace(/\n/g, '<br>');
 
-                const loadingEl = document.getElementById(loadingId);
-                loadingEl.innerHTML = reply; 
-                chatArea.scrollTop = chatArea.scrollHeight;
+                document.getElementById(loadingId).innerHTML = reply;
 
             } catch (err) {
-                console.error("Fetch Error:", err);
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) {
-                    loadingEl.innerHTML = `⚠️ <span style='color:red'>Maaf, sistem sedang sibuk. (${err.message})</span>`;
-                }
+                console.warn("AI Fetch Error:", err);
+                document.getElementById(loadingId).innerHTML = "Mohon maaf, koneksi internet sedang gangguan. Namun saya sarankan Anda mengunjungi <b>Sembalun</b> untuk menikmati udara segar pegunungan.";
             } finally {
                 userInput.disabled = false;
                 setTimeout(() => userInput.focus(), 100);
+                chatArea.scrollTop = chatArea.scrollHeight;
             }
         }
 
